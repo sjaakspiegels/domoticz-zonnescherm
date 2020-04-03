@@ -85,10 +85,10 @@ class BasePlugin:
         payload = str(message.payload.decode("utf-8"))
         Domoticz.Debug("message received " + payload)
 
-        if message.topic == "cmnd/" + self.mqttstatetopic.replace("#","POWER1"):
+        if message.topic == "cmnd/" + self.mqttstatetopic + "/POWER1":
             Domoticz.Debug("Scherm omhoog")
 
-        if message.topic == "cmnd/" + self.mqttstatetopic.replace("#","POWER2"):
+        if message.topic == "cmnd/" + self.mqttstatetopic + "/POWER2":
             Domoticz.Debug("Scherm omlaag")
 
     def onMessage(self, Connection, Data):
@@ -98,14 +98,14 @@ class BasePlugin:
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
         if Level == 10:
             Domoticz.Log("Scherm omhoog")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power1"), payload = "on", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER1", payload = "on", qos=1)
         elif Level == 20:
             Domoticz.Log("Scherm stop")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power1"), payload = "off", qos=1)
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power2"), payload = "off", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER1", payload = "off", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER2", payload = "off", qos=1)
         elif Level == 30:
             Domoticz.Log("Scherm omlaag")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic.replace("#","power2"), payload = "on", qos=1)
+            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER2", payload = "on", qos=1)
 
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
