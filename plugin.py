@@ -88,9 +88,9 @@ class BasePlugin:
         if payload == "open":
             Domoticz.Debug("Scherm omhoog")
             UpdateDevice(Unit=1, nValue = 10, sValue= "10")
-        elif payload == "stop":
-            Domoticz.Debug("Scherm stop")
-            UpdateDevice(Unit=1, nValue = 20, sValue= "20")
+#        elif payload == "stop":
+#            Domoticz.Debug("Scherm stop")
+#            UpdateDevice(Unit=1, nValue = 20, sValue= "20")
         elif payload == "close":
             Domoticz.Debug("Scherm omlaag")
             UpdateDevice(Unit=1, nValue = 30, sValue= "30")
