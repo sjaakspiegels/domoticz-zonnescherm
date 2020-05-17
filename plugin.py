@@ -74,8 +74,7 @@ class BasePlugin:
     def onMQTTConnect(self, client, userdata, flags, rc):
         Domoticz.Debug("onMQTTConnect called")
         Domoticz.Debug("Connected to " + self.mqttserveraddress + " with result code {}".format(rc))
-        self.mqttClient.subscribe("tele/" + self.mqttstatetopic,1)
-        self.mqttClient.subscribe("cmnd/" + self.mqttstatetopic,1)
+        self.mqttClient.subscribe("shellies/" + self.mqttstatetopic + "/roller/0",1)
 
     def onMQTTSubscribe(self, client, userdata, mid, granted_qos):
         Domoticz.Debug("onMQTTSubscribe called")
@@ -85,11 +84,15 @@ class BasePlugin:
         payload = str(message.payload.decode("utf-8"))
         Domoticz.Debug("message received " + payload)
 
-        if message.topic == "cmnd/" + self.mqttstatetopic + "/POWER1":
+        if payload == "open":
             Domoticz.Debug("Scherm omhoog")
-
-        if message.topic == "cmnd/" + self.mqttstatetopic + "/POWER2":
+            UpdateDevice(Unit=99, nValue = 10, sValue= "10")
+        elif payload == "stop":
+            Domoticz.Debug("Scherm stop")
+            UpdateDevice(Unit=99, nValue = 20, sValue= "20")
+        elif payload == "close":
             Domoticz.Debug("Scherm omlaag")
+            UpdateDevice(Unit=99, nValue = 30, sValue= "30")
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
@@ -98,14 +101,13 @@ class BasePlugin:
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
         if Level == 10:
             Domoticz.Log("Scherm omhoog")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER1", payload = "on", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "open", qos=1)
         elif Level == 20:
             Domoticz.Log("Scherm stop")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER1", payload = "off", qos=1)
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER2", payload = "off", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "stop", qos=1)
         elif Level == 30:
             Domoticz.Log("Scherm omlaag")
-            self.mqttClient.publish("cmnd/" + self.mqttstatetopic + "/POWER2", payload = "on", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "close", qos=1)
 
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
@@ -171,3 +173,10 @@ def onMQTTmessage(client, userdata, message):
     global _plugin
     _plugin.onMQTTmessage(client, userdata, message)
 
+def UpdateDevice(Unit, nValue, sValue):
+# Make sure that the Domoticz device still exists (they can be deleted) before updating it 
+    if (Unit in Devices):
+        if (Devices[Unit].nValue != nValue) or (Devices[Unit].sValue != sValue):
+            Devices[Unit].Update(nValue=nValue, sValue=str(sValue))
+            Domoticz.Debug("Update "+str(nValue)+":'"+str(sValue)+"' ("+Devices[Unit].Name+")")
+    return
