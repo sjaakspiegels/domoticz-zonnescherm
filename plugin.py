@@ -87,13 +87,13 @@ class BasePlugin:
 
         if payload == "open":
             Domoticz.Debug("Scherm omhoog")
-            UpdateDevice(Unit=99, nValue = 10, sValue= "10")
+            UpdateDevice(Unit=1, nValue = 10, sValue= "10")
         elif payload == "stop":
             Domoticz.Debug("Scherm stop")
-            UpdateDevice(Unit=99, nValue = 20, sValue= "20")
+            UpdateDevice(Unit=1, nValue = 20, sValue= "20")
         elif payload == "close":
             Domoticz.Debug("Scherm omlaag")
-            UpdateDevice(Unit=99, nValue = 30, sValue= "30")
+            UpdateDevice(Unit=1, nValue = 30, sValue= "30")
 
     def onMessage(self, Connection, Data):
         Domoticz.Debug("onMessage called")
@@ -102,13 +102,13 @@ class BasePlugin:
         Domoticz.Debug("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
         if Level == 10:
             Domoticz.Log("Scherm omhoog")
-            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "open", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/command", payload = "open", qos=1)
         elif Level == 20:
             Domoticz.Log("Scherm stop")
-            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "stop", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/command", payload = "stop", qos=1)
         elif Level == 30:
             Domoticz.Log("Scherm omlaag")
-            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/cmd", payload = "close", qos=1)
+            self.mqttClient.publish("shellies/" + self.mqttstatetopic + "/roller/0/command", payload = "close", qos=1)
 
 
     def onNotification(self, Name, Subject, Text, Status, Priority, Sound, ImageFile):
