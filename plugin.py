@@ -46,7 +46,7 @@ class BasePlugin:
 
         if (len(Devices) == 0):
             Options = {"LevelActions": "||","LevelNames": "|Omhoog|Stop|Omlaag","LevelOffHidden": "true","SelectorStyle": "0"}
-            Domoticz.Device(Name="zonnescherm-status", Unit=1, TypeName="Selector Switch", Switchtype=18, Options=Options).Create()
+            Domoticz.Device(Name="Zonnescherm", Unit=1, TypeName="Selector Switch", Switchtype=18, Options=Options).Create()
             Domoticz.Log("Devices created.")
 
         self.mqttserveraddress = Parameters["Address"].strip()
@@ -54,6 +54,7 @@ class BasePlugin:
         self.mqttusername = Parameters["Username"].strip()
         self.mqttpassword = Parameters["Password"].strip()
         self.mqttstatetopic = Parameters["Mode1"].strip()
+
 
         self.mqttClient = mqtt.Client()
         self.mqttClient.on_connect = onMQTTConnect
